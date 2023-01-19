@@ -41,8 +41,7 @@ pub struct CreateProposal<'info> {
         ],
         seeds::program = MPL_TOKEN_METADATA_ID,
         bump,
-        constraint = metadata.collection.as_ref().unwrap().verified == 
-        true @ Errors::CollectionNotVerified,
+        constraint = metadata.collection.as_ref().unwrap().verified @ Errors::CollectionNotVerified,
         constraint = metadata.collection.as_ref().unwrap().key ==
         collection_details.verified_collection_key @ Errors::CollectionNotSame
 

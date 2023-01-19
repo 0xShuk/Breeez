@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 use anchor_spl::metadata::MetadataAccount;
-use crate::states::Collection;
+use crate::{Errors,states::Collection};
 
 #[derive(Accounts)]
 pub struct EditTrade<'info> {
@@ -15,8 +15,9 @@ pub struct EditTrade<'info> {
     pub owner: Signer<'info>,
     
     #[account(
-        constraint = verified_collection.collection == None,
+        constraint = verified_collection.collection == None @ Errors::NotCollectionNft,
         constraint = verified_collection.update_authority == owner.key()
+        @ Errors::NotUpdateAuthority
     )]
     pub verified_collection: Account<'info, MetadataAccount>,
 
@@ -30,6 +31,7 @@ pub fn edit_trade_handler(ctx: Context<EditTrade>, new_num: u64, edit_type: Trad
             collection_details.trade_fees = new_num;
         },
         TradeEditType::Duration => {
+            require_gt!(new_num, 0, Errors::ZeroValue);
             collection_details.trade_duration = new_num as i64;
         }
     }

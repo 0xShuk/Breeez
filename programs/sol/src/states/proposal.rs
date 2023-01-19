@@ -5,9 +5,9 @@ use crate::Errors;
 pub struct Proposal {
     /// The public key of the associated collection (32)
     pub collection: Pubkey,
-    /// The text/title of the proposal (max 300)
+    /// The text/title of the proposal (4 + max 300)
     pub proposal: String,
-    /// The vector of the options (4 + 25 * 5)
+    /// The vector of the options (4 + 29 * 5)
     pub options: Vec<String>,
     /// The vector of votes corresponding to the options (4 + 8 * 5)
     pub votes: Vec<u64>,
@@ -29,7 +29,7 @@ impl Proposal {
         title_size: usize,
         option_count: usize
     ) -> usize {
-        8 + 32 + title_size + 4 + (25 * option_count) +
+        8 + 32 + 4 + title_size + 4 + (29 * option_count) +
         4 + (8 * option_count) + 4 + 1 + nft_count as usize + 
         2 + 8 + 32
     }
@@ -50,7 +50,7 @@ impl Proposal {
             votes,
             voters,
             options,
-            is_active: false,
+            is_active: true,
             is_passed: false,
             time,
             creator

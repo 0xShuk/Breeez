@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 use anchor_spl::metadata::MetadataAccount;
-use crate::states::Collection;
+use crate::{states::Collection,Errors};
 
 #[derive(Accounts)]
 pub struct EditVoting<'info> {
@@ -15,8 +15,9 @@ pub struct EditVoting<'info> {
     pub owner: Signer<'info>,
     
     #[account(
-        constraint = verified_collection.collection == None,
+        constraint = verified_collection.collection == None @ Errors::NotCollectionNft,
         constraint = verified_collection.update_authority == owner.key()
+        @ Errors::NotUpdateAuthority
     )]
     pub verified_collection: Account<'info, MetadataAccount>,
 
@@ -24,6 +25,8 @@ pub struct EditVoting<'info> {
 
 pub fn edit_voting_handler(ctx: Context<EditVoting>, new_num: u64, edit_type: VotingEditType) -> Result<()> {
     let collection_details = &mut ctx.accounts.collection_details;
+
+    require_gt!(new_num, 0, Errors::ZeroValue);
 
     match edit_type {
         VotingEditType::Count => {

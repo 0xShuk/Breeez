@@ -15,8 +15,9 @@ pub struct AddTrade<'info> {
     pub owner: Signer<'info>,
     
     #[account(
-        constraint = verified_collection.collection == None,
+        constraint = verified_collection.collection == None @ Errors::NotCollectionNft,
         constraint = verified_collection.update_authority == owner.key()
+        @ Errors::NotUpdateAuthority
     )]
     pub verified_collection: Account<'info, MetadataAccount>,
 
@@ -27,6 +28,8 @@ pub fn add_trade_handler(ctx: Context<AddTrade>, trade_fee: u64, duration: i64) 
 
     require_eq!(collection_details.is_trade, false, Errors::ModuleAlreadyAdded);
     
+    require_gt!(duration, 0, Errors::ZeroValue);
+
     collection_details.is_trade = true;
     collection_details.trade_duration = duration;
     collection_details.trade_fees = trade_fee;

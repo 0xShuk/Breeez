@@ -25,7 +25,7 @@ pub fn validate_metadata_account(
     );
 
     // Assert whether the metadata key provided is equal to the one calculated using the provided mint    
-    assert_eq!(*metadata.key,metadata_pda);
+    require_keys_eq!(*metadata.key,metadata_pda, Errors::WrongMetadata);
 
     let metadata_account: Account<MetadataAccount> = Account::try_from(metadata)?;
     

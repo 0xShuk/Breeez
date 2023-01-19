@@ -149,6 +149,9 @@ pub enum Errors {
     #[msg("The voting is closed for this proposal")]
     VotingIsClosed,
 
+    #[msg("The voting is still active for this proposal")]
+    VotingIsActive,
+
     #[msg("The provided account is not initialized")]
     AccountNotInitialized,
 
@@ -159,5 +162,17 @@ pub enum Errors {
     AlreadyVoted,
 
     #[msg("The selected option doesn't exist")]
-    OptionNotExists
+    OptionNotExists,
+
+    #[msg("The value cannot be zero")]
+    ZeroValue,
+
+    #[msg("The quorum cannot exceed the NFT count")]
+    InvalidQuorum,
+
+    #[msg("The proposal is already executed")]
+    ProposalAlreadyExecuted,
+
+    #[msg("The metadata PDA doesn't match with the token mint")]
+    WrongMetadata
 }

@@ -105,7 +105,7 @@ pub struct CreateTrade<'info> {
     )]
     pub two_metadata_validation: Box<Account<'info,MetadataAccount>>,
 
-    /// CHECK: Nothing is read or written into thhis account
+    /// CHECK: Nothing is read or written into this account
     pub party_two: AccountInfo<'info>,
 
     pub collection_details: Box<Account<'info, Collection>>,
