@@ -104,6 +104,10 @@ pub mod sol {
         instructions::withdraw_tokens_handler(ctx)
     }
 
+    pub fn create_identity(ctx: Context<CreateIdentity>,username: String) -> Result<()> {
+        instructions::create_identity_handler(ctx, username)
+    }
+
 }
 
 #[error_code]
