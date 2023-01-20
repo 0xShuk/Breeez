@@ -3,7 +3,7 @@ use anchor_spl::metadata::MetadataAccount;
 use crate::{states::Collection,Errors};
 
 #[derive(Accounts)]
-pub struct AddVoting<'info> {
+pub struct EditStake<'info> {
     #[account(
         mut,
         seeds = [b"collection", verified_collection.key().as_ref()],
@@ -22,20 +22,12 @@ pub struct AddVoting<'info> {
 
 }
 
-pub fn add_voting_handler(ctx: Context<AddVoting>, count: u64, duration: i64, quorum: u64) -> Result<()> {
+pub fn edit_stake_handler(ctx: Context<EditStake>, emission: u64) -> Result<()> {
     let collection_details = &mut ctx.accounts.collection_details;
 
-    require_eq!(collection_details.is_voting, false, Errors::ModuleAlreadyAdded);
+    require_gt!(emission, 0, Errors::ZeroValue);
 
-    require_gt!(count, 0, Errors::ZeroValue);
-    require_gt!(duration, 0, Errors::ZeroValue);
-    require_gt!(quorum, 0, Errors::ZeroValue);
-
-    require_gte!(count, quorum, Errors::InvalidQuorum);
-
-    collection_details.is_voting = true;
-    collection_details.quorum = quorum;
-    collection_details.count = count;
-    collection_details.vote_duration = duration;
+    collection_details.emission = emission;
+    
     Ok(())
 }

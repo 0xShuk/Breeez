@@ -15,6 +15,7 @@ pub struct CancelTrade<'info> {
         mut,
         has_one = party_one,
         has_one = party_two,
+        has_one = collection,
         close = party_one
     )]
     pub trade_details: Box<Account<'info, Trade>>,
@@ -25,7 +26,7 @@ pub struct CancelTrade<'info> {
             b"escrow-one",
             trade_details.party_one.key().as_ref(),
             trade_details.party_two.key().as_ref(),
-            collection_details.key().as_ref()
+            collection.key().as_ref()
         ],
         bump
     )]
@@ -37,7 +38,7 @@ pub struct CancelTrade<'info> {
             b"escrow-two",
             trade_details.party_one.key().as_ref(),
             trade_details.party_two.key().as_ref(),
-            collection_details.key().as_ref()
+            collection.key().as_ref()
         ],
         bump
     )]
@@ -45,15 +46,13 @@ pub struct CancelTrade<'info> {
 
     #[account(
         mut,
-        constraint = one_send_address.key() == 
-        trade_details.one_send_address.unwrap() @ Errors::IncorrectTokenAccount
+        address = trade_details.one_send_address.unwrap() @ Errors::IncorrectTokenAccount
     )]
     pub one_send_address: Option<Account<'info, TokenAccount>>,
 
     #[account(
         mut,
-        constraint = two_send_address.key() == 
-        trade_details.two_send_address.unwrap() @ Errors::IncorrectTokenAccount
+        address = trade_details.two_send_address.unwrap() @ Errors::IncorrectTokenAccount
     )]
     pub two_send_address: Option<Account<'info, TokenAccount>>,
 
@@ -64,11 +63,12 @@ pub struct CancelTrade<'info> {
     #[account(mut)] 
     pub party_two: AccountInfo<'info>,
     
-    #[account(
-        constraint = collection_details.key() == trade_details.collection @ Errors::CollectionNotSame 
-    )]
-    pub collection_details: Box<Account<'info, Collection>>,
+    pub collection: Box<Account<'info, Collection>>,
 
+    #[account(
+        seeds = [b"escrow"],
+        bump
+    )]
     pub escrow_authority: AccountInfo<'info>,
 
     pub system_program: Program<'info, System>,
@@ -145,10 +145,10 @@ pub fn cancel_trade_handler(ctx: Context<CancelTrade>) -> Result<()> {
     let time = clock.unix_timestamp;
 
     let trade_details = &ctx.accounts.trade_details;
-    let collection_details = &ctx.accounts.collection_details;
+    let collection_details = &ctx.accounts.collection;
 
 
-    if trade_details.is_confirmed == true {
+    if trade_details.is_confirmed {
         if trade_details.spl_amount[0] > 0 {
             ctx.accounts.transfer_spl(0, trade_details.spl_amount[0])?;
         }

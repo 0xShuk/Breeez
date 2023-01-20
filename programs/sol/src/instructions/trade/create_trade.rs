@@ -76,8 +76,7 @@ pub struct CreateTrade<'info> {
         ],
         seeds::program = MPL_TOKEN_METADATA_ID,
         bump,
-        constraint = one_metadata_validation.collection.as_ref().unwrap().verified == 
-        true @ Errors::CollectionNotVerified,
+        constraint = one_metadata_validation.collection.as_ref().unwrap().verified @ Errors::CollectionNotVerified,
         constraint = one_metadata_validation.collection.as_ref().unwrap().key ==
         collection_details.verified_collection_key @ Errors::CollectionNotSame
 
@@ -98,8 +97,7 @@ pub struct CreateTrade<'info> {
         ],
         seeds::program = MPL_TOKEN_METADATA_ID,
         bump,
-        constraint = two_metadata_validation.collection.as_ref().unwrap().verified == 
-        true @ Errors::CollectionNotVerified,
+        constraint = two_metadata_validation.collection.as_ref().unwrap().verified @ Errors::CollectionNotVerified,
         constraint = two_metadata_validation.collection.as_ref().unwrap().key ==
         collection_details.verified_collection_key @ Errors::CollectionNotSame
     )]

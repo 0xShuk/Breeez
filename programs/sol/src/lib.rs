@@ -6,7 +6,7 @@ pub mod utils;
 
 use instructions::*;
 use states::TradeType;
-declare_id!("FyAhN3NB5CkiW3tqhPKU7e3UPQUP5DuBD4oMUrww6Ah2");
+declare_id!("DPRJXJ11cytcEWJKiWwb4EV6Bmkzojp67ZSh3JbEUorc");
 
 #[constant]
 pub const MPL_TOKEN_METADATA_ID: Pubkey = pubkey!("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s");
@@ -38,6 +38,18 @@ pub mod sol {
         instructions::edit_trade_handler(ctx, new_num, edit_type)
     }
 
+    pub fn add_stake(ctx: Context<AddStake>, emission: u64) -> Result<()> {
+        instructions::add_stake_handler(ctx, emission)
+    }
+
+    pub fn edit_stake(ctx: Context<EditStake>, emission: u64) -> Result<()> {
+        instructions::edit_stake_handler(ctx, emission)
+    }
+
+    pub fn add_token(ctx: Context<AddToken>) -> Result<()> {
+        instructions::add_token_handler(ctx)
+    }
+    
     pub fn create_trade(
         ctx: Context<CreateTrade>,
         sol_amount: u64,
@@ -74,6 +86,22 @@ pub mod sol {
 
     pub fn give_vote(ctx: Context<GiveVote>,choice: u8) -> Result<()> {
         instructions::give_vote_handler(ctx, choice)
+    }
+
+    pub fn execute_proposal(ctx: Context<ExecuteProposal>) -> Result<()> {
+        instructions::execute_proposal_handler(ctx)
+    }
+
+    pub fn stake_nft(ctx: Context<StakeNft>) -> Result<()> {
+        instructions::stake_nft_handler(ctx)
+    }
+
+    pub fn unstake_nft(ctx: Context<UnstakeNft>) -> Result<()> {
+        instructions::unstake_nft_handler(ctx)
+    }
+
+    pub fn withdraw_tokens(ctx: Context<WithdrawTokens>) -> Result<()> {
+        instructions::withdraw_tokens_handler(ctx)
     }
 
 }
@@ -174,5 +202,14 @@ pub enum Errors {
     ProposalAlreadyExecuted,
 
     #[msg("The metadata PDA doesn't match with the token mint")]
-    WrongMetadata
+    WrongMetadata,
+
+    #[msg("The token doesn't exist for this collection")]
+    TokenNotFound,
+
+    #[msg("The token already exists for this collection")]
+    TokenAlreadyExists,
+
+    #[msg("The signer is not the owner of the token account")]
+    InvalidOwner
 }

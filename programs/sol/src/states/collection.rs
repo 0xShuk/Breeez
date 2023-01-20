@@ -25,11 +25,13 @@ pub struct Collection {
     /// The duration for the trade (in seconds)
     pub trade_duration: i64,
     /// The fees for the trade (to be sent to treasury address - in Lamports)
-    pub trade_fees: u64
+    pub trade_fees: u64,
+    /// The emission of tokens per hour of staking
+    pub emission: u64
 }
 
 impl Collection {
-    pub const LEN: usize = 8 + 32 + 32 + 1 + 32 + 1 + 1 + 1 + 1 + 8 + 8 + 8 + 8 + 8; 
+    pub const LEN: usize = 8 + 32 + 32 + 1 + 32 + 1 + 1 + 1 + 1 + 8 + 8 + 8 + 8 + 8 + 8; 
 
     pub fn new(
         verified_collection_key: Pubkey,
@@ -47,7 +49,8 @@ impl Collection {
             vote_duration: 0,
             quorum: 0,
             trade_duration: 0,
-            trade_fees: 0
+            trade_fees: 0,
+            emission: 0
         }
     }
 }

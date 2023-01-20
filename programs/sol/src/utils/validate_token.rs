@@ -16,7 +16,7 @@ pub fn validate_token_account(
     let token_account: Account<TokenAccount> = Account::try_from(token_accountinfo)?;
 
     // Asserts whether the signer has the authority of the token account
-    assert_eq!(token_account.owner, *signer);
+    require_keys_eq!(token_account.owner, *signer, Errors::InvalidOwner);
 
     // Verifies whether the supply of the token account is exactly 1
     require_eq!(token_account.amount, 1, Errors::TokenNotOne);

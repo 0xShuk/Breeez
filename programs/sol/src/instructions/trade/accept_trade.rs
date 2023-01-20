@@ -18,7 +18,8 @@ use crate::{Errors, ID,};
 pub struct AcceptTrade<'info> {
     #[account(
         mut,
-        has_one = party_two
+        has_one = party_two,
+        has_one = collection
     )]
     pub trade_details: Box<Account<'info, Trade>>,
 
@@ -29,7 +30,7 @@ pub struct AcceptTrade<'info> {
             b"escrow-two",
             trade_details.party_one.as_ref(),
             party_two.key.as_ref(),
-            collection_details.key().as_ref()
+            collection.key().as_ref()
         ],
         bump,
         token::mint = two_mint,
@@ -66,10 +67,7 @@ pub struct AcceptTrade<'info> {
     )]
     pub party_two: Signer<'info>,
     
-    #[account(
-        constraint = collection_details.key() == trade_details.collection @ Errors::CollectionNotSame 
-    )]
-    pub collection_details: Box<Account<'info, Collection>>,
+    pub collection: Box<Account<'info, Collection>>,
 
     pub system_program: Program<'info, System>,
     pub token_program: Program<'info, Token>,

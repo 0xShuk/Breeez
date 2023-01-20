@@ -18,6 +18,7 @@ pub struct ExecuteTrade<'info> {
         mut,
         has_one = party_one,
         has_one = party_two,
+        has_one = collection,
         close = party_one
     )]
     pub trade_details: Box<Account<'info, Trade>>,
@@ -28,7 +29,7 @@ pub struct ExecuteTrade<'info> {
             b"escrow-one",
             trade_details.party_one.key().as_ref(),
             trade_details.party_two.key().as_ref(),
-            collection_details.key().as_ref()
+            collection.key().as_ref()
         ],
         bump
     )]
@@ -40,7 +41,7 @@ pub struct ExecuteTrade<'info> {
             b"escrow-two",
             trade_details.party_one.key().as_ref(),
             trade_details.party_two.key().as_ref(),
-            collection_details.key().as_ref()
+            collection.key().as_ref()
         ],
         bump
     )]
@@ -56,14 +57,13 @@ pub struct ExecuteTrade<'info> {
 
     #[account(
         mut,
-        constraint = two_receive_address.key() == 
-        trade_details.two_receive_address.unwrap() @ Errors::IncorrectTokenAccount
+        address = trade_details.two_receive_address.unwrap() @ Errors::IncorrectTokenAccount
     )]
     pub two_receive_address: Option<Account<'info, TokenAccount>>,
 
     #[account(
         mut,
-        constraint = party_one.lamports() >= collection_details.trade_fees @ Errors::InsufficientBalance
+        constraint = party_one.lamports() >= collection.trade_fees @ Errors::InsufficientBalance
     )]
     pub party_one: Signer<'info>,
 
@@ -73,18 +73,22 @@ pub struct ExecuteTrade<'info> {
     
     #[account(
         has_one = treasury_address,
-        constraint = collection_details.key() == trade_details.collection @ Errors::CollectionNotSame 
     )]
-    pub collection_details: Box<Account<'info, Collection>>,
+    pub collection: Box<Account<'info, Collection>>,
 
+    #[account(
+        seeds = [b"escrow"],
+        bump
+    )]
     pub escrow_authority: AccountInfo<'info>,
 
     #[account(
-        constraint = two_mint.key() == trade_details.two_mint.unwrap() @ Errors::MintNotExist
+        address = trade_details.two_mint.unwrap() @ Errors::MintNotExist
     )]
     pub two_mint: Option<Box<Account<'info, Mint>>>,
 
     /// CHECK: This account is customly validated
+    #[account(mut)]
     pub treasury_address: AccountInfo<'info>,
 
     pub system_program: Program<'info, System>,
@@ -190,7 +194,7 @@ pub fn execute_trade_handler(ctx: Context<ExecuteTrade>) -> Result<()> {
         }
     }
 
-    let trade_fees = ctx.accounts.collection_details.trade_fees;
+    let trade_fees = ctx.accounts.collection.trade_fees;
 
     if trade_fees > 0 {
         system_program::transfer(

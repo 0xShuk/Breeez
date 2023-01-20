@@ -14,7 +14,6 @@ pub struct ExecuteProposal<'info> {
     )]
     pub proposal_details: Account<'info, Proposal>,
 
-    #[account(mut)]
     pub signer: Signer<'info>,
 }
 

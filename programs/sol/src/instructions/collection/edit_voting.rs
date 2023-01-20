@@ -11,7 +11,6 @@ pub struct EditVoting<'info> {
     )]
     pub collection_details: Account<'info, Collection>,
 
-    #[account(mut)]
     pub owner: Signer<'info>,
     
     #[account(
@@ -30,12 +29,14 @@ pub fn edit_voting_handler(ctx: Context<EditVoting>, new_num: u64, edit_type: Vo
 
     match edit_type {
         VotingEditType::Count => {
+            require_gte!(new_num, collection_details.quorum, Errors::InvalidQuorum);
             collection_details.count = new_num;
         },
         VotingEditType::Duration => {
             collection_details.vote_duration = new_num as i64;
         },
         VotingEditType::Quorum => {
+            require_gte!(collection_details.count, new_num, Errors::InvalidQuorum);
             collection_details.quorum = new_num;
         }
     }

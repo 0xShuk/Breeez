@@ -11,7 +11,6 @@ pub struct EditTrade<'info> {
     )]
     pub collection_details: Account<'info, Collection>,
 
-    #[account(mut)]
     pub owner: Signer<'info>,
     
     #[account(
