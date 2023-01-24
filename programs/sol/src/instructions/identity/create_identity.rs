@@ -71,7 +71,7 @@ pub struct CreateIdentity<'info> {
 
 pub fn create_identity_handler(ctx: Context<CreateIdentity>,username: String) -> Result<()> {
 
-    require_gte!(username.len(), 15, Errors::StringLengthExceeds);
+    require_gte!(15, username.len(), Errors::StringLengthExceeds);
 
     let identity_details = &mut ctx.accounts.identity_details;
     let username_details = &mut ctx.accounts.username_details;

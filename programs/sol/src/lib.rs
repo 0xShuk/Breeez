@@ -6,13 +6,13 @@ pub mod utils;
 
 use instructions::*;
 use states::TradeType;
-declare_id!("DPRJXJ11cytcEWJKiWwb4EV6Bmkzojp67ZSh3JbEUorc");
+declare_id!("EtpeDoazsCWZU5Hp9kgyHmNKxvr7oHu8X82eTfR4W3oY");
 
 #[constant]
 pub const MPL_TOKEN_METADATA_ID: Pubkey = pubkey!("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s");
 
 #[program]
-pub mod sol {
+pub mod breeez {
     use super::*;
 
     /// * Creates account which holds the info about the collection
